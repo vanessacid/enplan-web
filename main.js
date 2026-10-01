@@ -2,7 +2,10 @@
 window.ENPLAN_CONFIG = {
   email: "enplancomunicacion.online@gmail.com",
   whatsapp: "34641577061", // Prefijo internacional y número, solo dígitos. Ejemplo de formato: 34...
-  instagram: "https://www.instagram.com/enplan.comunicacion/" // URL completa del perfil de ENPLAN.
+  instagram: "https://www.instagram.com/enplan.comunicacion/", // URL completa del perfil de ENPLAN.
+  // Clave de Web3Forms para que el formulario os llegue por correo automáticamente.
+  // Pídela gratis en https://web3forms.com con enplancomunicacion.online@gmail.com y pégala entre las comillas.
+  formKey: ""
 };
 
 const menu = document.querySelector('.menu-toggle');
@@ -29,15 +32,38 @@ const form=document.querySelector('#contact-form');
 if(form){
   const note=document.querySelector('#form-note');
   const status=document.querySelector('#form-status');
-  if(email) {document.querySelector('#submit-button').textContent='Preparar mi correo';note.textContent='Se abrirá tu aplicación de correo con la consulta preparada. Solo se enviará cuando tú lo confirmes allí.';}
-  else if(phone){document.querySelector('#submit-button').textContent='Continuar en WhatsApp';note.textContent='Se abrirá WhatsApp con tu consulta preparada. Tú confirmas el envío.';}
+  const button=document.querySelector('#submit-button');
+  // Solo se usa si se configura un servicio de formularios (Web3Forms). Si está vacío, el formulario continúa en WhatsApp.
+  const formKey=typeof config.formKey==='string' && config.formKey.trim().length>10 ? config.formKey.trim() : '';
+  if(formKey){button.textContent='Enviar mi consulta';note.textContent='Te respondemos en menos de 48 horas laborables.';}
   form.addEventListener('submit',async event=>{
-    event.preventDefault();if(!form.reportValidity())return;
+    event.preventDefault();
+    if(!form.reportValidity())return;
     const data=new FormData(form);
-    const text=`Hola, ENPLAN. Soy ${data.get('name')}.\nNegocio: ${data.get('business')}\nCorreo: ${data.get('email')}\nCiudad: ${data.get('location') || 'Sin indicar'}\nMe interesa: ${data.get('interest')}\n\n${data.get('message')}`;
-    if(email){location.href='mailto:'+email+'?subject='+encodeURIComponent('Consulta ENPLAN · '+data.get('business'))+'&body='+encodeURIComponent(text);status.textContent='Tu correo está preparado. Revisa y envía desde tu aplicación de correo.';return;}
-    if(phone){location.href='https://wa.me/'+phone+'?text='+encodeURIComponent(text);return;}
-    const output=document.querySelector('#prepared-message');output.hidden=false;output.value=text;
-    try{await navigator.clipboard.writeText(text);status.textContent='Mensaje copiado. No se ha enviado ninguna consulta.';}catch{output.focus();output.select();status.textContent='Tu mensaje está listo para copiar. No se ha enviado.';}
+    if(data.get('botcheck'))return;
+    const lines=[`Hola, ENPLAN. Soy ${data.get('name')}.`,`Correo: ${data.get('email')}`];
+    if(data.get('business'))lines.push(`Negocio: ${data.get('business')}`);
+    if(data.get('interest'))lines.push(`Me interesa: ${data.get('interest')}`);
+    lines.push('',data.get('message'));
+    const text=lines.join('\n');
+    if(formKey){
+      button.disabled=true;const label=button.textContent;button.textContent='Enviando…';status.textContent='';
+      try{
+        const res=await fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({
+          access_key:formKey,subject:'Nueva consulta web · '+(data.get('business')||data.get('name')),from_name:'Web ENPLAN Comunicación',replyto:data.get('email'),
+          Nombre:data.get('name'),Correo:data.get('email'),Negocio:data.get('business')||'—',Interes:data.get('interest'),Mensaje:data.get('message')})});
+        const json=await res.json().catch(()=>({}));
+        if(res.ok && json.success!==false){form.reset();status.textContent='¡Recibido! Te respondemos en menos de 48 horas laborables.';}
+        else throw new Error('envío');
+      }catch(err){status.textContent='No hemos podido enviar tu consulta. Escríbenos por WhatsApp al 641 577 061.';}
+      finally{button.disabled=false;button.textContent=label;}
+      return;
+    }
+    if(phone){
+      window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(text),'_blank','noopener');
+      status.textContent='Hemos abierto WhatsApp con tu mensaje. Revísalo y pulsa enviar para que nos llegue.';
+      return;
+    }
+    if(email){location.href='mailto:'+email+'?subject='+encodeURIComponent('Consulta ENPLAN')+'&body='+encodeURIComponent(text);}
   });
 }
