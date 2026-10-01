@@ -67,3 +67,16 @@ if(form){
     if(email){location.href='mailto:'+email+'?subject='+encodeURIComponent('Consulta ENPLAN')+'&body='+encodeURIComponent(text);}
   });
 }
+
+// Animaciones suaves al desplazarse. Sin JS o con movimiento reducido, todo se ve normal.
+(function(){
+  const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const groups=['.section-heading','.work-card','.plan','.batch-grid>div:first-child','.batch-media','.services-grid li','.resource-card','.faq details','.contact-grid>div','.contact-grid form','.works-note','.plan-notes'];
+  const els=[];
+  groups.forEach(sel=>document.querySelectorAll(sel).forEach((el,i)=>{el.classList.add('reveal');if(el.querySelector('img')||el.classList.contains('batch-media'))el.classList.add('reveal-img');el.style.transitionDelay=(Math.min(i,5)*80)+'ms';els.push(el);}));
+  const show=el=>el.classList.add('in');
+  if(reduce||!('IntersectionObserver' in window)){els.forEach(show);return;}
+  const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){show(e.target);io.unobserve(e.target);}}),{rootMargin:'0px 0px -8% 0px',threshold:.12});
+  els.forEach(el=>io.observe(el));
+  window.addEventListener('beforeprint',()=>els.forEach(show));
+})();
