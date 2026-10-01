@@ -13,9 +13,9 @@ Web de **enplancomunicacion.online**, publicada con GitHub Pages.
 | `404.html` | Página de error |
 | `styles.css` | Estilos de todas las páginas |
 | `main.js` | Menú móvil, formulario y enlaces de contacto |
-| `fonts/` | Tipografías Outfit e Instrument Sans (licencia SIL OFL) |
-| `img/` | Imágenes de trabajos y del ejemplo de «Del tirón» (WebP + JPG) |
-| `logo.png`, `favicon.svg`, `apple-touch-icon.png`, `og-image.png` | Imágenes de marca |
+| `*.woff2` | Tipografías Outfit e Instrument Sans (licencia SIL OFL) |
+| `` | Imágenes de trabajos y del ejemplo de «Del tirón» (WebP + JPG) |
+| `logo-enplan.png`, `favicon.svg`, `apple-touch-icon.png`, `og-image.png` | Imágenes de marca |
 | `CNAME` | Dominio de la web. No borrar |
 | `robots.txt`, `sitemap.xml` | Para Google |
 
