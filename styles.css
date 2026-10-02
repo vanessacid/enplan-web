@@ -213,3 +213,16 @@ img{max-width:100%;height:auto;display:block}
  .work-card:hover,.work-card:hover img{transform:none}
 }
 @media print{.js .reveal{opacity:1!important;transform:none!important}}
+
+/* Servicio destacado: UGC */
+.services-grid .service-featured{grid-column:1/-1;background:var(--lilac,#D9D4FF);padding:28px 32px 30px;margin:0 0 0;border-bottom:1px solid var(--ink);position:relative}
+.services-grid .service-featured h3{font-size:1.6rem}
+.services-grid .service-featured p{max-width:62ch;color:var(--ink,#17161F);font-size:1rem}
+.service-tag{align-self:flex-start;background:var(--orange,#FF5B2E);color:#fff;font-weight:700;font-size:.72rem;letter-spacing:.08em;padding:4px 10px;border-radius:999px}
+@media(max-width:560px){.services-grid .service-featured{padding:24px 20px}}
+.services-grid .service-tag{color:#fff;font-size:.72rem;line-height:1.4}
+
+/* Sección UGC */
+.ugc{border-top:1px solid var(--line)}
+.ugc .batch-grid{grid-template-columns:1fr 1.05fr}
+@media(max-width:760px){.ugc .batch-grid{grid-template-columns:1fr}.ugc .batch-media{order:2}}
