@@ -360,3 +360,5 @@ img{max-width:100%;height:auto;display:block}
 .cr-badges .cr-badge{margin-top:0}
 .creator-form .chips{margin-bottom:6px}
 .creator-form>label:first-of-type{margin-top:0}
+.ugc-actions{gap:12px}
+@media(max-width:760px){.ugc-actions .button{width:100%}}
